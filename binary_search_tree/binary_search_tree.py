@@ -187,7 +187,11 @@ bst.insert(3)
 bst.insert(4)
 bst.insert(2)
 
+print('--- in_order_print ---')
+bst.in_order_print()
+print('--- bft_print ---')
 bst.bft_print()
+print('--- dft_print ---')
 bst.dft_print()
 
 # print("elegant methods")
