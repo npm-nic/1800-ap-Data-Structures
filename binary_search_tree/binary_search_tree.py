@@ -9,25 +9,29 @@ This part of the project comprises two days:
 2. Implement the `in_order_print`, `bft_print`, and `dft_print` methods
    on the BSTNode class.
 """
+
+from queue import Queue
+from stack import Stack
+
 class BSTNode:
     def __init__(self, value):
         self.value = value
         self.left = None
         self.right = None
 
-    # Insert the given value into the tree
+    # ---------> insert() <---------
         # IF: no root value:
             # create new node
-        # IF: value < targeted Node's value --> need to go left 
-            # IF: we see that there is no left child,
-                # then we can wrap the value in a BSTNode and park it
-            # ELSE: there is a child 
-                # call the left child's `insert` method 
-        # ELSE: value >= Node's value --> need to go right 
-            # IF: we see there is no right child, 
-                # then we can wrap the value in a BSTNode and park it 
-            # ELSE: there is a child 
-                # call the right child's `insert` method 
+        # IF: target < node.value --> go left
+            # IF: node.left is None
+                # create node here
+            # ELSE:
+                # do the same thing --> insert target into node.left
+        # ElSE: value >= Node's value --> go right 
+            # IF: node.right is None
+                # create node here
+            # ELSE: there is a node.right
+                # do the same thing --> insert target into node.right
     def insert(self, value):
         if self is None:
             self = BSTNode(value)
@@ -42,20 +46,24 @@ class BSTNode:
             else:
                 self.right.insert(value)
 
+
     # Return True if the tree contains the value
     # False if it does not
+    # --------> contains() <----------
         # IF: root value is the target
             # return true
-        # IF: target is bigger than current value
-            # IF: the right of the current value is empty
-                # return False --> there are no more numbers to check --> number not in the tree
-            # ELSE: it is not empty ...
-                # call contains() on current right node
-        # IF: target is smaller than current value:
-            # IF: the next node is empty
-                # return False --> there are no more numbers to check --> number not in the tree
-            # ELSE: it is not empty...
-                # call contains() on current left node
+        # IF: target > current value --> go right
+            # IF: node.right is empty
+                # --> there are no more numbers to check <--> number not in the tree
+                # RETURN false
+            # ELSE: node.right is not empty ...
+                # RETURN contains() on node.right
+        # IF: target < current value --> go left
+            # IF: node.left is empty
+                # --> there are no more numbers to check --> number not in the tree
+                # RETURN false 
+            # ELSE: node.left is not empty...
+                # RETURN call contains() on node.left 
     def contains(self, target):
         if self.value ==  target:  
             return True
@@ -72,6 +80,7 @@ class BSTNode:
     
 
     # Return the maximum value found in the tree
+    # --------> get_max() <---------
         # IF: the next right node is empty --> biggest node is the root
             # return that value 
         # ELSE: there is another (larger) number to the right...
@@ -83,7 +92,9 @@ class BSTNode:
         else:
             return self.right.get_max()
 
+
     # Call the function `fn` on the value of each node
+    # --------> for_each <---------
         # call the anonymous function on self.value
         # IF: this node has a right child
             # pass the anonymous function to it
@@ -96,22 +107,61 @@ class BSTNode:
         if self.left is not None:
             self.left.for_each(fn)
 
-    # Part 2 -----------------------
+
+
+
+
+    # ----- Part 2 (Day 4) -----
 
     # Print all the values in order from low to high
     # Hint:  Use a recursive, depth first traversal
+    # ----------> in_order_print() <----------
+        # IF: theres a smaller number (aka self.left exists)
+            # run again on that node
+        # PRINT: once you are all the way left
+        # IF: theres a node to the right
+            # run again on that node
     def in_order_print(self):
-        pass
+        if self.left:
+            self.left.in_order_print()
+        print(self.value)
+        if self.right is not None:
+            self.right.in_order_print()
 
     # Print the value of every node, starting with the given node,
     # in an iterative breadth first traversal
+    # ----------> bft_print() <----------
     def bft_print(self):
-        pass
+        queue = Queue()
+        if self is None:
+            return
+        current = self
+        queue.enqueue(current)
+        while (len(queue) > 0):
+            current = queue.dequeue()
+            print(current.value)
+            if current.left:
+                queue.enqueue(current.left)
+            if current.right:
+                queue.enqueue(current.right)
 
     # Print the value of every node, starting with the given node,
     # in an iterative depth first traversal
+    # ----------> dtf_print() <----------
     def dft_print(self):
-        pass
+        stack = Stack()
+        if self is None:
+            return
+        current_node = self
+        stack.push(current_node)
+        while len(stack):
+            current_node = stack.pop()
+            print(current_node.value)
+
+            if current_node.left:
+                stack.push(current_node.left)
+            if current_node.right:
+                stack.push(current_node.right)
 
     # Stretch Goals -------------------------
     # Note: Research may be required
@@ -137,12 +187,16 @@ bst.insert(3)
 bst.insert(4)
 bst.insert(2)
 
-# bst.bft_print()
-# bst.dft_print()
+print('--- in_order_print ---')
+bst.in_order_print()
+print('--- bft_print ---')
+bst.bft_print()
+print('--- dft_print ---')
+bst.dft_print()
 
 # print("elegant methods")
-# print("pre order")
-# bst.pre_order_dft()
+# # print("pre order")
+# # bst.pre_order_dft()
 # print("in order")
 # bst.in_order_dft()
 # print("post order")
